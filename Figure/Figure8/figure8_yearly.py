@@ -8,6 +8,8 @@ from pathlib import Path
 import warnings
 import pickle
 from matplotlib.lines import Line2D
+from multiprocessing import Pool, cpu_count
+from functools import partial
 
 
 # ==================== 配置部分 ====================
@@ -20,7 +22,7 @@ class Config:
 
     # 【缓存配置】
     CACHE_DIR = './cache_data_seasonal'
-    CACHE_FILE = 'seasonal_metrics_all_cache.pkl'  # ✅ 改名避免冲突
+    CACHE_FILE = 'seasonal_metrics_all_cache_yearly.pkl'  # ✅ 改名避免与旧缓存冲突
 
     # ✅ 【重要】缓存中存储所有4个指标
     ALL_METRICS = ['rmse', 'mae', 'bias', 'pcc']
@@ -40,7 +42,7 @@ class Config:
         'rmse': (0, 1.0),
         'bias': (-1.5, 1.5),
         'mae': (0, 1.0),
-        'pcc': (-1.0, 1.0),
+        'pcc': (0, 1.0),
         'default': None
     }
 
@@ -64,13 +66,9 @@ class Config:
             'pred': '../../Baseline/QM/qm_edcdf_q100_results_data/{model}/test_corrections.npy',
             'true': '../../Baseline/QM/qm_edcdf_q100_results_data/{model}/test_trues.npy'
         },
-        # 'linear_reg': {
-        #     'pred': '../../Baseline/Linear_regression/lr_results_data_s3_p1/{model}/test_corrections.npy',
-        #     'true': '../../Baseline/Linear_regression/lr_results_data_s3_p1/{model}/test_trues.npy'
-        # },
         'ConvLSTM': {
-             'pred': '../../Baseline/ConvLSTM/first/md-ConvLSTM_cn-{model}_bs-8_pt-10_sl-3_cl-1_dp-0.0_ln-mse_norm-True/test_corrections.npy',
-             'true': '../../Baseline/ConvLSTM/first/md-ConvLSTM_cn-{model}_bs-8_pt-10_sl-3_cl-1_dp-0.0_ln-mse_norm-True/test_trues.npy'
+            'pred': '../../Baseline/ConvLSTM/first/md-ConvLSTM_cn-{model}_bs-8_pt-10_sl-3_cl-1_dp-0.0_ln-mse_norm-True/test_corrections.npy',
+            'true': '../../Baseline/ConvLSTM/first/md-ConvLSTM_cn-{model}_bs-8_pt-10_sl-3_cl-1_dp-0.0_ln-mse_norm-True/test_trues.npy'
         },
         'UNet': {
             'pred': '../../Baseline/UNet/first/md-UNet_cn-{model}_bs-32_pt-15_sl-3_cl-1_dp-0.0_ln-mse_norm-True/test_corrections.npy',
@@ -159,40 +157,72 @@ class DataLoader:
             return None, None
 
     def calculate_monthly_metric(self, pred_s, true_s, metric):
-        """计算12个月的指标值"""
-        results = []
-        diff = pred_s - true_s
+        """
+        ✅ 修改为：先分别计算每年的月度指标（5年×12月=60个值），再按月平均
 
-        for m in range(1, 13):
-            mask = pred_s.index.month == m
-            p_m = pred_s[mask].dropna()
-            t_m = true_s[mask].dropna()
-            d_m = diff[mask].dropna()
+        步骤：
+        1. 对每一年，计算12个月的指标 → 得到5组12个月的值
+        2. 对每个月（1-12），平均5年的该月指标值
+        3. 返回12个月的平均指标值
+        """
+        # 获取所有年份
+        years = pred_s.index.year.unique()
+        monthly_values_by_year = []  # 存储每年的月度指标列表
 
-            if len(d_m) == 0:
-                results.append(np.nan)
-                continue
+        # 先计算每年的月度指标
+        for year in years:
+            year_mask = pred_s.index.year == year
+            pred_y = pred_s[year_mask]
+            true_y = true_s[year_mask]
+            diff_y = pred_y - true_y
 
-            if metric == 'rmse':
-                val = np.sqrt(np.mean(d_m ** 2))
-            elif metric == 'mae':
-                val = np.mean(np.abs(d_m))
-            elif metric == 'bias':
-                val = np.mean(d_m)
-            elif metric == 'pcc':
-                if len(p_m) > 1:
-                    val = np.corrcoef(p_m, t_m)[0, 1]
+            year_monthly_vals = []
+
+            for month in range(1, 13):
+                month_mask = pred_y.index.month == month
+                p_ym = pred_y[month_mask].dropna()
+                t_ym = true_y[month_mask].dropna()
+                d_ym = diff_y[month_mask].dropna()
+
+                if len(d_ym) == 0:
+                    year_monthly_vals.append(np.nan)
+                    continue
+
+                if metric == 'rmse':
+                    val = np.sqrt(np.mean(d_ym ** 2))
+                elif metric == 'mae':
+                    val = np.mean(np.abs(d_ym))
+                elif metric == 'bias':
+                    val = np.mean(d_ym)
+                elif metric == 'pcc':
+                    if len(p_ym) > 1:
+                        val = np.corrcoef(p_ym, t_ym)[0, 1]
+                    else:
+                        val = np.nan
                 else:
                     val = np.nan
-            else:
-                val = np.nan
 
-            results.append(val)
+                year_monthly_vals.append(val)
+
+            monthly_values_by_year.append(year_monthly_vals)
+
+        # 对每个月，平均5年的值
+        results = []
+        monthly_values_by_year = np.array(monthly_values_by_year)  # 形状: (5年, 12月)
+
+        for month in range(12):
+            month_vals = monthly_values_by_year[:, month]  # 该月5年的值
+            month_vals = month_vals[~np.isnan(month_vals)]  # 去掉NaN
+
+            if len(month_vals) > 0:
+                results.append(np.mean(month_vals))
+            else:
+                results.append(np.nan)
 
         return results
 
-    def load_or_calculate_all_metrics(self, force_recompute=False):
-        """✅ 改进：缓存所有4个指标的数据"""
+    def load_or_calculate_all_metrics(self, force_recompute=False, n_workers=10):
+        """✅ 改进：使用并行计算加速，缓存所有4个指标的数据"""
         cache_path = Path(self.config.CACHE_DIR) / self.config.CACHE_FILE
 
         # 1. 尝试加载缓存
@@ -219,26 +249,30 @@ class DataLoader:
             except Exception as e:
                 print(f"❌ 缓存文件加载失败 ({e})，将重新计算。")
 
-        # 2. ✅ 计算所有4个指标的数据
-        print("💻 正在计算所有指标和月度数据（包含所有4个指标）...")
-        all_data_cache = {}
-        total_tasks = len(self.config.METHODS_TO_PLOT) * len(self.config.ALL_METRICS)
-        task_count = 0
+        # 2. ✅ 使用并行计算所有4个指标的数据
+        print(f"💻 正在使用 {n_workers} 个进程并行计算所有指标和月度数据...")
 
+        # 准备所有任务
+        tasks = []
         for method_key, method_label in self.config.METHODS_TO_PLOT:
-            for metric_key in self.config.ALL_METRICS:  # ✅ 使用 ALL_METRICS
-                task_count += 1
-                print(f"   [{task_count}/{total_tasks}] 计算 {method_label} - {metric_key}...")
+            for metric_key in self.config.ALL_METRICS:
+                tasks.append((method_key, method_label, metric_key))
 
-                model_results_list = []
-                for model in self.config.MODELS:
-                    pred_s, true_s = self.get_data_pair(method_key, model)
+        total_tasks = len(tasks)
+        print(f"   总任务数: {total_tasks}")
 
-                    if pred_s is not None and true_s is not None:
-                        monthly_vals = self.calculate_monthly_metric(pred_s, true_s, metric_key)
-                        model_results_list.append(monthly_vals)
+        # 使用进程池并行计算
+        all_data_cache = {}
 
-                all_data_cache[(method_key, metric_key)] = model_results_list
+        with Pool(processes=n_workers) as pool:
+            # 使用偏函数传递self.config
+            process_func = partial(self._process_single_task, config=self.config)
+            results = pool.map(process_func, tasks)
+
+        # 整理结果
+        for (method_key, metric_key), model_results_list in results:
+            all_data_cache[(method_key, metric_key)] = model_results_list
+            print(f"   ✅ 完成: {method_key} - {metric_key}")
 
         # 3. 保存缓存
         Path(self.config.CACHE_DIR).mkdir(exist_ok=True)
@@ -248,14 +282,46 @@ class DataLoader:
 
         return all_data_cache
 
+    @staticmethod
+    def _process_single_task(task, config):
+        """
+        ✅ 静态方法：处理单个任务（方法+指标）
+        用于多进程并行计算
+        """
+        method_key, method_label, metric_key = task
+        print(f"   🔄 处理: {method_label} - {metric_key}")
+
+        # 创建临时DataLoader实例
+        loader = DataLoader(config)
+
+        model_results_list = []
+        for model in config.MODELS:
+            pred_s, true_s = loader.get_data_pair(method_key, model)
+
+            if pred_s is not None and true_s is not None:
+                monthly_vals = loader.calculate_monthly_metric(pred_s, true_s, metric_key)
+                model_results_list.append(monthly_vals)
+
+        return (method_key, metric_key), model_results_list
+
 
 # ==================== 绘图主程序 ====================
-def plot_multi_metric_comparison(force_recompute=False):
+def plot_multi_metric_comparison(force_recompute=False, n_workers=10):
+    """
+    绘制多指标对比图
+
+    Args:
+        force_recompute: 是否强制重新计算（忽略缓存）
+        n_workers: 并行进程数，默认10
+    """
     c = Config()
     loader = DataLoader(c)
 
-    # ✅ 加载包含所有4个指标的缓存数据
-    all_metric_data = loader.load_or_calculate_all_metrics(force_recompute=force_recompute)
+    # ✅ 加载包含所有4个指标的缓存数据（带并行参数）
+    all_metric_data = loader.load_or_calculate_all_metrics(
+        force_recompute=force_recompute,
+        n_workers=n_workers
+    )
 
     # ✅ 从缓存中提取要绘制的指标
     metric_keys = c.TARGET_METRICS
@@ -328,8 +394,6 @@ def plot_multi_metric_comparison(force_recompute=False):
             if r == n_methods - 1:
                 ax.set_xlabel("Time (months)", fontsize=12)
 
-
-
             ax.set_xticks(x_positions)
             ax.set_xticklabels(['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'])
             ax.set_xlim(x_positions[0], x_positions[-1])
@@ -369,12 +433,11 @@ def plot_multi_metric_comparison(force_recompute=False):
                frameon=False,
                columnspacing=1.0)
 
-
     plt.tight_layout(rect=[0, 0, 1, 0.92])
 
     Path(c.OUTPUT_DIR).mkdir(exist_ok=True)
     metric_str = '_vs_'.join(metric_keys)
-    filename = f"monthly_climatology_compare_{metric_str}.png"
+    filename = f"monthly_climatology_compare_{metric_str}_yearly.png"
     save_path = Path(c.OUTPUT_DIR) / filename
     plt.savefig(save_path, bbox_inches='tight')
 
@@ -386,4 +449,5 @@ if __name__ == "__main__":
     plt.rcParams['font.size'] = 10
 
     # 首次运行设为 True 计算所有指标，后续设为 False 使用缓存
-    plot_multi_metric_comparison(force_recompute=False)
+    # n_workers 参数控制并行进程数，默认10
+    plot_multi_metric_comparison(force_recompute=False, n_workers=10)
