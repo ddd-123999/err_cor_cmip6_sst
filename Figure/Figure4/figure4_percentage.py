@@ -27,7 +27,7 @@ class Config:
         ('EDCDF', 'EDCDF', '#D8211C', '-'),
         ('ConvLSTM', 'ConvLSTM', '#fc945d', '-.'),
         ('UNet', 'UNet', '#4baf73', '-'),
-        ('MambaUNet', 'MambaUNet', '#299BCF', '-'),
+        ('MambaUNet', 'Mamba-TempNet', '#299BCF', '-'),
     ]
 
     METHODS_CONFIG = {
@@ -57,7 +57,7 @@ class Config:
     MASK_PATH = '../../Preprocessing/observation/obs/mask.npy'
     OUTPUT_DIR = './histogram_figures'
     OUTPUT_FILENAME = 'bias_timeseries_7x3_day_mean.png'
-    DPI = 300
+    DPI = 600
     N_COLS = 3
     N_ROWS = 7
 

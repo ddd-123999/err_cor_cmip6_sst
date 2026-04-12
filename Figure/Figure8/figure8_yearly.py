@@ -18,7 +18,7 @@ class Config:
     START_DATE = '2020-01-01'
     PERIODS = 1827
     OUTPUT_DIR = './seasonal_metrics'
-    DPI = 300
+    DPI = 600
 
     # 【缓存配置】
     CACHE_DIR = './cache_data_seasonal'
@@ -53,7 +53,7 @@ class Config:
         # ('linear_reg', 'Linear Regression'),
         ('ConvLSTM', 'ConvLSTM'),
         ('UNet', 'UNet'),
-        ('MambaUNet', 'MambaUNet'),
+        ('MambaUNet', 'Mamba-TempNet'),
     ]
 
     # --- 数据路径配置 ---
@@ -372,27 +372,27 @@ def plot_multi_metric_comparison(force_recompute=False, n_workers=10):
             avg_vals = np.nanmean(all_models_monthly, axis=0)
             mean_line, = ax.plot(x_positions, avg_vals,
                                  color='black', linewidth=2.5, linestyle='-',
-                                 label='Multi-model Mean', zorder=100)
+                                 label='MMM', zorder=100)
 
             if not legend_collected:
                 legend_handles.append(mean_line)
-                legend_labels.append('Multi-model Mean')
+                legend_labels.append('MMM')
                 legend_collected = True
 
             # 设置子图样式
             if r == 0:
-                ax.set_title(metric_label, fontsize=15, fontweight='normal')
+                ax.set_title(metric_label, fontsize=18, fontweight='normal')
                 # 2. 根据列索引 col 设置左侧的编号 (a), (b)
                 if col == 0:
-                    ax.set_title('(a)', fontsize=15, fontweight='normal', loc='left')
+                    ax.set_title('(a)', fontsize=18, fontweight='normal', loc='left')
                 elif col == 1:
-                    ax.set_title('(b)', fontsize=15, fontweight='normal', loc='left')
+                    ax.set_title('(b)', fontsize=18, fontweight='normal', loc='left')
 
             if col == 0:
-                ax.set_ylabel(f"{method_label}", fontsize=15, fontweight='normal')
+                ax.set_ylabel(f"{method_label}", fontsize=18, fontweight='normal')
 
             if r == n_methods - 1:
-                ax.set_xlabel("Time (months)", fontsize=12)
+                ax.set_xlabel("Time (months)", fontsize=18)
 
             ax.set_xticks(x_positions)
             ax.set_xticklabels(['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'])
@@ -403,8 +403,8 @@ def plot_multi_metric_comparison(force_recompute=False, n_workers=10):
             if y_lim:
                 ax.set_ylim(y_lim)
 
-            ax.tick_params(axis='y', labelsize=11)
-            ax.tick_params(axis='x', labelsize=11)
+            ax.tick_params(axis='y', labelsize=13)
+            ax.tick_params(axis='x', labelsize=13)
 
     # 全局图例
     ncol = 6

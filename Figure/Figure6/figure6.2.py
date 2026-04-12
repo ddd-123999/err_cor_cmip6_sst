@@ -42,7 +42,7 @@ class Config:
         # ('linear_reg', 'Linear Reg', '../../Baseline/Linear_regression/lr_results_data_s3_p1/lr_metrics_s3_p1_all.npy'),
         ('ConvLSTM', 'ConvLSTM', '../../Baseline/ConvLSTM/first/convlstm_metrics_s3_p1_all.npy'),
         ('UNet', 'UNet', '../../Baseline/UNet/first/unet_metrics_s3_p1_all.npy'),
-        ('MambaUNet', 'MambaUNet', '../../Baseline/MambaUNet/first/mambaunet_metrics_s3_p1_all.npy'),
+        ('MambaUNet', 'Mamba-TempNet', '../../Baseline/MambaUNet/first/mambaunet_metrics_s3_p1_all.npy'),
     ]
 
     # --- 3. 指标配置（两个子图）---

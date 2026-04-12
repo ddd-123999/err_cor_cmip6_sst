@@ -26,13 +26,13 @@ class Config:
 
     # --- 🎨 本次要画的模型(随时修改这里切换) ---
     MODELS = [
-        'ACCESS-CM2',
-        'ACCESS-ESM1-5',
-        'BCC-CSM2-MR',
-        'CanESM5',
-        'CESM2-WACCM',
-        'CMCC-CM2-SR5',
-        'CMCC-ESM2',
+        # 'ACCESS-CM2',
+        # 'ACCESS-ESM1-5',
+        # 'BCC-CSM2-MR',
+        # 'CanESM5',
+        # 'CESM2-WACCM',
+        # 'CMCC-CM2-SR5',
+        # 'CMCC-ESM2',
 
         # 'EC-Earth3-CC',
         # 'EC-Earth3-Veg-LR',
@@ -42,13 +42,13 @@ class Config:
         # 'GFDL-ESM4',
         # 'IPSL-CM6A-LR',
 
-        # 'MIROC6',
-        # 'MPI-ESM1-2-HR',
-        # 'MPI-ESM1-2-LR',
-        # 'MRI-ESM2-0',
-        # 'NESM3',
-        # 'NorESM2-LM',
-        # 'NorESM2-MM'
+        'MIROC6',
+        'MPI-ESM1-2-HR',
+        'MPI-ESM1-2-LR',
+        'MRI-ESM2-0',
+        'NESM3',
+        'NorESM2-LM',
+        'NorESM2-MM'
     ]
 
     # --- ✅ 新增:缓存配置 ---
@@ -82,7 +82,7 @@ class Config:
             'true': '../../Baseline/UNet/first/md-UNet_cn-{model}_bs-32_pt-15_sl-3_cl-1_dp-0.0_ln-mse_norm-True/test_trues.npy'
         }, True),
 
-        ('MambaUNet', 'MambaUNet', {
+        ('MambaUNet', 'Mamba-TempNet', {
             'pred': '../../Baseline/MambaUNet/first/md-MambaUNet_new_cn-{model}_bs-32_pt-20_sl-3_cl-1_dp-0.0_ln-mse_norm-True/test_corrections.npy',
             'true': '../../Baseline/MambaUNet/first/md-MambaUNet_new_cn-{model}_bs-32_pt-20_sl-3_cl-1_dp-0.0_ln-mse_norm-True/test_trues.npy'
         }, True),
@@ -103,9 +103,9 @@ class Config:
     GEO_INFO_PATH = '../../Preprocessing/observation/obs/sst_daily_not_to_be_normalized.npz'
 
     # --- 图片配置 ---
-    OUTPUT_FILENAME = 'models_1-7.png'
+    # OUTPUT_FILENAME = 'models_1-7.png'
     # OUTPUT_FILENAME = 'models_8-14.png'
-    # OUTPUT_FILENAME = 'models_15-21.png'  # 💡 根据MODELS列表手动修改文件名
+    OUTPUT_FILENAME = 'models_15-21.png'  # 💡 根据MODELS列表手动修改文件名
     OUTPUT_DIR = './comparison_figures'
 
     # --- 色标配置 ---

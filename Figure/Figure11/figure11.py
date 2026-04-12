@@ -39,7 +39,7 @@ class Config:
         # ('linear_reg', 'Linear Reg', '#fc945d', '-', 2.0),
         ('ConvLSTM', 'ConvLSTM', '#bfe4ef', '--', 3.0),
         ('UNet', 'UNet', '#dd878f', '--', 3.0),
-        ('MambaUNet', 'MambaUNet', '#bc2325', '-', 3.0),
+        ('MambaUNet', 'Mamba-TempNet', '#bc2325', '-', 3.0),
 
     ]
 
@@ -327,7 +327,7 @@ def plot_metric_curves(force_recompute=False):
                 legend_handles.append(line)
 
         # d) 装饰子图
-        ax.set_title(metric_label, fontsize=20, fontweight='bold', pad=10)
+        ax.set_title(metric_label, fontsize=24, fontweight='normal', pad=10)
         # ax.set_ylabel(metric_label, fontsize=16)
 
         ax.set_xticks(x_pos)
@@ -335,7 +335,7 @@ def plot_metric_curves(force_recompute=False):
         ax.set_xlim(-0.5, len(sorted_models) - 0.5)
 
         # ax.grid(True, linestyle='--', alpha=0.3)
-        ax.tick_params(axis='y', labelsize=14)
+        ax.tick_params(axis='y', labelsize=15)
 
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
@@ -351,6 +351,7 @@ def plot_metric_curves(force_recompute=False):
 
         if metric_key.lower() == 'bias':
             ax.axhline(0, color='gray', linestyle=':', linewidth=1, alpha=0.5)
+            ax.set_yticks(np.arange(-0.5, 2.0, 0.25))
 
     # 4. 全局图例和保存
     legend_labels = [m[1] for m in cfg.METHODS]
@@ -359,7 +360,7 @@ def plot_metric_curves(force_recompute=False):
                loc='lower center',
                bbox_to_anchor=(0.5, -0.02),
                ncol=len(legend_handles),
-               fontsize=18,
+               fontsize=24,
                frameon=False,
                columnspacing=1.5,
                handlelength=3)

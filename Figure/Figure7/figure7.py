@@ -38,7 +38,7 @@ class Config:
     # 输出配置
     OUTPUT_DIR = './sst_figures'
     OUTPUT_FILENAME = 'sst_combined_trend_spatial_final.png'
-    DPI = 300
+    DPI = 600
 
     # 空间图配置
     EXTENT = [-180, 180, 66, 90]
@@ -330,20 +330,24 @@ def plot_combined_figure():
                     linewidth=2.0, label='Individual models')
 
     # ========== 添加趋势斜率文本标注 ==========
-    slope_text_orig = f'linear trend= {original_slope:.3f} °C/decade'
-    ax_ts_orig.text(0.02, 0.86, slope_text_orig,
+    slope_text_orig = f'linear trend = {original_slope:.3f} °C/decade'
+    ax_ts_orig.text(0.02, 0.83, slope_text_orig,
                     transform=ax_ts_orig.transAxes,
-                    fontsize=12, fontweight='bold',
-                    color=config.ORIGINAL_MMM_COLOR,
-                    verticalalignment='top')
+                    fontsize=16, fontweight='normal',
+                    verticalalignment='top',
+                    color=config.ORIGINAL_MMM_COLOR)
 
-    ax_ts_orig.set_ylabel('SST (°C)', fontsize=14)
-    ax_ts_orig.set_title('(a)', fontsize=16, fontweight='bold', loc='left')
+    ax_ts_orig.set_ylabel('SST (°C)', fontsize=18)
+    ax_ts_orig.set_title('(a)', fontsize=18, fontweight='normal', loc='left')
+    ax_ts_orig.text(0.98, 0.98, 'Control',
+                    transform=ax_ts_orig.transAxes,
+                    fontsize=18, fontweight='normal',
+                    ha='right', va='top')
     ax_ts_orig.set_xlim(config.START_YEAR, config.END_YEAR)
     ax_ts_orig.set_ylim(y_min, y_max)
     ax_ts_orig.tick_params(labelbottom=False)
     ax_ts_orig.grid(True, alpha=0.25, linestyle='--')
-    ax_ts_orig.legend(loc='upper left', fontsize=11, frameon=False)
+    ax_ts_orig.legend(loc='upper left', fontsize=13, frameon=False)
     ax_ts_orig.tick_params(axis='both', labelsize=12)
 
     # ========== 子图2: Control 空间分布 (右上) ==========
@@ -355,7 +359,11 @@ def plot_combined_figure():
     center, radius = [0.5, 0.5], 0.5
     circle = mpath.Path(np.vstack([np.sin(theta), np.cos(theta)]).T * radius + center)
     ax_spatial_orig.set_boundary(circle, transform=ax_spatial_orig.transAxes)
-
+    # ax_spatial_orig.text(0.5, 0.5, 'control',
+    #                      transform=ax_spatial_orig.transAxes,
+    #                      fontsize=14, fontweight='normal',
+    #                      ha='center', va='center',
+    #                      color=config.ORIGINAL_MMM_COLOR)
     # 绘制趋势
     if orig_trend is not None:
         im_orig = ax_spatial_orig.pcolormesh(
@@ -390,7 +398,7 @@ def plot_combined_figure():
     gl_orig = ax_spatial_orig.gridlines(draw_labels=False, linewidth=0.5,
                                         color='gray', alpha=0.5, linestyle='--', zorder=4)
     gl_orig.ylocator = mticker.FixedLocator([60, 70, 80])
-    ax_spatial_orig.set_title('(c)', fontsize=16, fontweight='bold', loc='left')
+    ax_spatial_orig.set_title('(c)                   Control', fontsize=18, fontweight='normal', loc='left')
 
     # ========== 子图3: MambaUNet 线性趋势 (左下) ==========
     ax_ts_corr = fig.add_subplot(gs[1, 0], sharex=ax_ts_orig)
@@ -415,30 +423,38 @@ def plot_combined_figure():
 
     # 添加invisible线用于图例
     ax_ts_corr.plot([], [], color=config.INDIVIDUAL_COLOR,
-                    linewidth=2.0, label='Individual Models')
+                    linewidth=2.0, label='Individual models')
 
     # ========== 添加趋势斜率文本标注 ==========
-    slope_text_corr = f'linear trend: {corrected_slope:.3f} °C/decade'
-    ax_ts_corr.text(0.02, 0.86, slope_text_corr,
+    slope_text_corr = f'linear trend = {corrected_slope:.3f} °C/decade'
+    ax_ts_corr.text(0.02, 0.83, slope_text_corr,
                     transform=ax_ts_corr.transAxes,
-                    fontsize=12, fontweight='bold',
-                    color=config.CORRECTED_MMM_COLOR,
-                    verticalalignment='top')
+                    fontsize=16, fontweight='normal',
+                    verticalalignment='top',
+                    color=config.CORRECTED_MMM_COLOR)
 
-    ax_ts_corr.set_xlabel('Time', fontsize=14, fontweight='bold')
-    ax_ts_corr.set_ylabel('SST (°C)', fontsize=14, fontweight='bold')
-    ax_ts_corr.set_title('(b)', fontsize=16, fontweight='bold', loc='left')
+    ax_ts_corr.set_xlabel('Time (years)', fontsize=18, fontweight='normal')
+    ax_ts_corr.set_ylabel('SST (°C)', fontsize=18, fontweight='normal')
+    ax_ts_corr.set_title('(b)', fontsize=18, fontweight='normal', loc='left')
+    ax_ts_corr.text(0.98, 0.98, 'Mamba-TempNet',
+                    transform=ax_ts_corr.transAxes,
+                    fontsize=18, fontweight='normal',
+                    ha='right', va='top')
     ax_ts_corr.set_xlim(config.START_YEAR, config.END_YEAR)
     ax_ts_corr.set_ylim(y_min, y_max)
     ax_ts_corr.grid(True, alpha=0.25, linestyle='--')
-    ax_ts_corr.legend(loc='upper left', fontsize=11, frameon=False)
+    ax_ts_corr.legend(loc='upper left', fontsize=13, frameon=False)
     ax_ts_corr.tick_params(axis='both', labelsize=12)
 
     # ========== 子图4: MambaUNet 空间分布 (右下) ==========
     ax_spatial_corr = fig.add_subplot(gs[1, 1], projection=ccrs.NorthPolarStereo())
     ax_spatial_corr.set_extent(config.EXTENT, crs=ccrs.PlateCarree())
     ax_spatial_corr.set_boundary(circle, transform=ax_spatial_corr.transAxes)
-
+    # ax_spatial_corr.text(0.5, 0.5, 'Mamba-TempNet',
+    #                      transform=ax_spatial_corr.transAxes,
+    #                      fontsize=14, fontweight='normal',
+    #                      ha='center', va='center',
+    #                      color=config.CORRECTED_MMM_COLOR)
     # 绘制趋势
     if corr_trend is not None:
         im_corr = ax_spatial_corr.pcolormesh(
@@ -473,14 +489,14 @@ def plot_combined_figure():
     gl_corr = ax_spatial_corr.gridlines(draw_labels=False, linewidth=0.5,
                                         color='gray', alpha=0.5, linestyle='--', zorder=4)
     gl_corr.ylocator = mticker.FixedLocator([60, 70, 80])
-    ax_spatial_corr.set_title('(d)', fontsize=16, fontweight='bold', loc='left')
+    ax_spatial_corr.set_title('(d)          Mamaba-TempNet', fontsize=18, fontweight='normal', loc='left')
 
     # ========== 添加色标 (竖向,放在右侧空间图的右边) ==========
     cbar_ax = fig.add_axes([0.93, 0.2, 0.015, 0.6])  # [left, bottom, width, height]
 
     cbar = fig.colorbar(im_corr if corr_trend is not None else im_orig,
                         cax=cbar_ax, orientation='vertical', extend='neither')
-    cbar.set_label('SST trend (°C/decade)', fontsize=13, fontweight='bold')
+    cbar.set_label('SST trend (°C/decade)', fontsize=18, fontweight='normal')
     cbar.ax.tick_params(labelsize=11)
 
     # ========== 保存图片 ==========
@@ -490,7 +506,7 @@ def plot_combined_figure():
 
     print(f"\n✅ 图片已保存: {save_path}")
     print("=" * 60)
-
+    # plt.show()
 
 # ==================== 主程序 ====================
 if __name__ == "__main__":

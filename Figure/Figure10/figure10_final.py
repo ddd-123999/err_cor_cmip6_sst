@@ -15,7 +15,7 @@ from PIL import Image
 # ==================== 配置部分 ====================
 class Config:
     # 1. 基础配置
-    DPI = 300
+    DPI = 600
     OUTPUT_DIR = './combined_figures'
     OUTPUT_FILENAME = 'seasonal_and_regional_comparison_with_map.png'
 
@@ -215,7 +215,7 @@ def plot_combined_figure(force_recompute=False):
                       color='black', linewidth=3, zorder=10)
 
     # 设置样式
-    ax_left.text(0.02, 0.98, "(a)", fontsize=18, fontweight='bold', transform=ax_left.transAxes, va='top', ha='left')
+    ax_left.text(0.02, 0.98, "(a)", fontsize=18, fontweight='normal', transform=ax_left.transAxes, va='top', ha='left')
     ax_left.set_ylabel("SST (°C)", fontsize=18)
     ax_left.set_xlabel("Time (months)", fontsize=18)
     ax_left.set_xticks(range(1, 13))
@@ -225,7 +225,7 @@ def plot_combined_figure(force_recompute=False):
     ax_left.set_ylim(-2, 5)
     ax_left.tick_params(axis='y', labelsize=12)
 
-    ax_right.text(0.02, 0.98, "(b)", fontsize=18, fontweight='bold', transform=ax_right.transAxes, va='top', ha='left')
+    ax_right.text(0.02, 0.98, "(b)", fontsize=18, fontweight='normal', transform=ax_right.transAxes, va='top', ha='left')
     ax_right.set_xlabel("Regions", fontsize=18)
     ax_right.set_xticks(range(len(Config.REGION_KEYS)))
     ax_right.set_xticklabels(Config.REGION_KEYS, fontsize=14)

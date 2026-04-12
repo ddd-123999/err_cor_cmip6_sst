@@ -193,7 +193,7 @@ def plot_sst_grid():
                 gmt_img = Image.open(conf.GMT_MAP_PATH)
                 ax.imshow(gmt_img)
                 ax.axis('off')
-                ax.set_title(title_text, fontsize=30, fontweight='bold', pad=30)
+                # ax.set_title(title_text, fontsize=30, fontweight='bold', pad=30)
                 print(f"   ✅ 成功插入GMT地图: {conf.GMT_MAP_PATH}")
             except FileNotFoundError:
                 print(f"   ⚠️ 找不到GMT地图文件: {conf.GMT_MAP_PATH}")

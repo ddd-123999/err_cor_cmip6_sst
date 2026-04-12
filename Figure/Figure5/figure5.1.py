@@ -51,7 +51,7 @@ class Config:
         # ('linear_reg', 'Linear Reg', '#efe9c2'),
         ('ConvLSTM', 'ConvLSTM', '#efe9c2'),
         ('UNet', 'UNet', '#fc945d'),
-        ('MambaUNet', 'MambaUNet', '#c32b23')
+        ('MambaUNet', 'Mamba-TempNet', '#c32b23')
 
         # # (配置键名, 图例显示名, 颜色)  再反过来
         # ('base', 'CMIP6 Raw', '#354e97'),
