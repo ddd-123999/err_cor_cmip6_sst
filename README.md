@@ -73,11 +73,10 @@ python Project/main.py \
   --batch_size 32 \
   --learning_rate 1e-5 \
   --train_epochs 200 \
-  --root_path_correction ./inter_data/CanESM5/ \
-  --checkpoints ./Experiment/Mamba_TempNet_CanESM5
-```
 
-Available models: `Mamba_TempNet`, `UNet`, `ConvLSTM`
+```
+o
+Available models: `Mamba_TempNet`, `UNet`, `CnvLSTM`, `Linear Regress`, `EDCDF`
 
 Recommended training configurations:
 
