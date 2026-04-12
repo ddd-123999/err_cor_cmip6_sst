@@ -4,13 +4,13 @@ import random
 
 import numpy as np
 import torch
-from exp.exp import Exp
+from Project.exp.exp import Exp
 
-file = '../Preprocessing/anomaly_data/ACCESS-CM2/ssp245_pre_anomaly.npz'
+file = '../Preprocessing/anomaly_data/MRI-ESM2-0/ssp245_pre_anomaly.npz'
 # 通用
 parser = argparse.ArgumentParser(description='correction CMIP')
-parser.add_argument('--model', type=str, default='MambaUNet_new', help='SwinUNet, SwinUNet_new, '
-                                                                     'MambaUNet, MambaUNet_new'
+parser.add_argument('--model', type=str, default='Mamba_TempNet', help='SwinUNet, SwinUNet_new, '
+                                                                     'MambaUNet, Mamba_TempNet'
                                                                      'UNet, UNet_new'
                                                                      'ConvLSTM, ConvLSTM_new, UNet_LSTM')
 parser.add_argument('--seq_len', type=int, default=3, help='input sequence length')
@@ -28,26 +28,26 @@ parser.add_argument('--add_anomaly', type=bool, default=False, help='should anom
 parser.add_argument('--use_normalized', type=bool, default=True, help='Whether to use normalised data')
 parser.add_argument('--use_standardized', type=bool, default=False, help='Whether to use Z-SCORE standardized data')
 
-parser.add_argument('--root_path_target', type=str, default='../Preprocessing/observation/obs_normalized/', help='root path of the target data file')
-parser.add_argument('--data_path_target', type=str, default='sst_daily_ACCESS-CM2.npz', help='target data file')
-parser.add_argument('--root_path_norm_params', type=str, default='../Preprocessing/dataset/ACCESS-CM2_normalized/', help='root path of normalization parameters file')
+parser.add_argument('--root_path_target', type=str, default='../Preprocessing/universal/observation/obs_normalized/', help='root path of the target data file')
+parser.add_argument('--data_path_target', type=str, default='sst_daily_MRI-ESM2-0.npz', help='target data file')
+parser.add_argument('--root_path_norm_params', type=str, default='../Preprocessing/universal/dataset/MRI-ESM2-0_normalized/', help='root path of normalization parameters file')
 parser.add_argument('--data_path_norm_params', type=str, default='normalization_params.npz', help='normalization parameters file name')
-parser.add_argument('--root_path_std_params', type=str, default='../Preprocessing/dataset/ACCESS-CM2_standardized/', help='root path of Z-SCORE standardization parameters file')
+parser.add_argument('--root_path_std_params', type=str, default='../Preprocessing/universal/dataset/MRI-ESM2-0_standardized/', help='root path of Z-SCORE standardization parameters file')
 parser.add_argument('--data_path_std_params', type=str, default='standardization_params.npz', help='Z-SCORE standardization parameters file name')
-parser.add_argument('--root_path_mask', type=str, default='../Preprocessing/observation/obs/', help='root path of the mask data file')
-parser.add_argument('--root_path_correction', type=str, default='../Preprocessing/dataset/ACCESS-CM2/', help='root path correction data file')
+parser.add_argument('--root_path_mask', type=str, default='../Preprocessing/universal/observation/obs/', help='root path of the mask data file')
+parser.add_argument('--root_path_correction', type=str, default='../Preprocessing/universal/dataset/MRI-ESM2-0/', help='root path correction data file')
 parser.add_argument('--data_path_train', type=str, default='ssp245_train.npz', help='training correction data file')
 parser.add_argument('--data_path_val', type=str, default='ssp245_val.npz', help='validation correction data file')
 parser.add_argument('--data_path_test', type=str, default='ssp245_test.npz', help='testing correction data file')
 parser.add_argument('--checkpoints', type=str, default='../Experiment/MambaUNet', help='location of model checkpoints')
 
-parser.add_argument('--root_path_pre', type=str, default='../Preprocessing/dataset/ACCESS-CM2/', help='root path of the pred data file')
+parser.add_argument('--root_path_pre', type=str, default='../Preprocessing/universal/dataset/MRI-ESM2-0/', help='root path of the pred data file')
 parser.add_argument('--data_path_pre', type=str, default='ssp245_pre.npz', help='pred data file')
-parser.add_argument('--root_path_anomaly', type=str, default='../Preprocessing/anomaly_data/ACCESS-CM2/', help='root path of the anomaly data file')
+parser.add_argument('--root_path_anomaly', type=str, default='../Preprocessing/anomaly_data/MRI-ESM2-0/', help='root path of the anomaly data file')
 parser.add_argument('--data_path_anomaly_train', type=str, default='ssp245_train_anomaly.npz', help='anomaly data file for training')
 parser.add_argument('--data_path_anomaly_val', type=str, default='ssp245_val_anomaly.npz', help='anomaly data file for validation')
 parser.add_argument('--data_path_anomaly_test', type=str, default='ssp245_test_anomaly.npz', help='anomaly data file for testing')
-parser.add_argument('--root_path_anomaly_in_pre', type=str, default='../Preprocessing/anomaly_data/ACCESS-CM2/', help='root path anomaly in pred')
+parser.add_argument('--root_path_anomaly_in_pre', type=str, default='../Preprocessing/anomaly_data/MRI-ESM2-0/', help='root path anomaly in pred')
 parser.add_argument('--data_path_anomaly_in_pre', type=str, default='ssp245_pre_anomaly.npz', help='anomaly in pred data file')
 
 # UNet
@@ -75,7 +75,6 @@ args = parser.parse_args()
 
 # 配置cuda 加载mask、area
 args.device = torch.device('cuda')
-
 folder_path_mask = os.path.join(args.root_path_mask, 'mask.npy')
 args.mask_data = np.load(folder_path_mask)
 
@@ -118,17 +117,17 @@ if args.use_normalized and args.use_standardized:
 # 动态设置模型数据路径
 if args.use_normalized:
     print("✅ 使用 Min-Max 归一化数据")
-    args.root_path_correction = "../Preprocessing/dataset/ACCESS-CM2_normalized/"
-    args.root_path_pre = "../Preprocessing/dataset/ACCESS-CM2_normalized/"
+    args.root_path_correction = "../Preprocessing/universal/dataset/MRI-ESM2-0_normalized/"
+    args.root_path_pre = "../Preprocessing/universal/dataset/MRI-ESM2-0_normalized/"
 elif args.use_standardized:
     print("✅ 使用 Z-score 标准化数据")
     # 假设 Z-score 数据放在 _standardized 文件夹中
-    args.root_path_correction = "../Preprocessing/dataset/ACCESS-CM2_standardized/"
-    args.root_path_pre = "../Preprocessing/dataset/ACCESS-CM2_standardized/"
+    args.root_path_correction = "../Preprocessing/universal/dataset/MRI-ESM2-0_standardized/"
+    args.root_path_pre = "../Preprocessing/universal/dataset/MRI-ESM2-0_standardized/"
 else:
     print("ℹ️ 使用原始数据")
-    args.root_path_correction = "../Preprocessing/dataset/ACCESS-CM2/"
-    args.root_path_pre = "../Preprocessing/dataset/ACCESS-CM2/"
+    args.root_path_correction = "../Preprocessing/universal/dataset/MRI-ESM2-0/"
+    args.root_path_pre = "../Preprocessing/universal/dataset/MRI-ESM2-0/"
 
 
 # 加载归一化/标准化参数
@@ -168,18 +167,18 @@ else:
 if args.use_normalized:
     # --- Min-Max 归一化模式 ---
     # Min-Max 归一化后的观测数据通常存放在 obs_normalized 文件夹中
-    args.root_path_target = '../Preprocessing/observation/obs_normalized/'
+    args.root_path_target = '../Preprocessing/universal/observation/obs_normalized/'
     args.data_path_target = f'sst_daily_{cmip_name}.npz'
     print(f"✅ 使用 Min-Max 归一化后的观测数据: {args.data_path_target}")
 elif args.use_standardized:
     # --- Z-score 标准化模式 ---
     # ⚠️ 修正：Z-score 标准化后的观测数据应从 obs_standardized 文件夹加载
-    args.root_path_target = '../Preprocessing/observation/obs_standardized/'
+    args.root_path_target = '../Preprocessing/universal/observation/obs_standardized/'
     args.data_path_target = f'sst_daily_{cmip_name}.npz'
     print(f"✅ 使用 Z-score 标准化后的观测数据: {args.data_path_target}")
 else:
     # --- 原始数据模式 ---
-    args.root_path_target = '../Preprocessing/observation/obs/'
+    args.root_path_target = '../Preprocessing/universal/observation/obs/'
     args.data_path_target = 'sst_daily_not_to_be_normalized.npz'
     print(f"ℹ️ 使用原始观测数据: {args.data_path_target}")
 
@@ -266,7 +265,7 @@ train_time, test_loader = exp.train(setting)
 print('>'*20 + 'testing' + '<'*20)
 exp.test(setting, test_loader)
 
-# print('>'*20 + 'predict' + '<'*20)
-# exp.predict(setting)
+print('>'*20 + 'predict' + '<'*20)
+exp.predict(setting)
 
 torch.cuda.empty_cache()

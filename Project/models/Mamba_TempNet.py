@@ -64,7 +64,7 @@ class UpSample(nn.Module):
 # =============================
 # 主结构 MambaUNet_new
 # =============================
-class MambaUNet_new(nn.Module):
+class Mamba_TempNet(nn.Module):
     def __init__(self, args):
         super().__init__()
         self.add_anomaly = args.add_anomaly

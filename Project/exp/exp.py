@@ -17,7 +17,7 @@ from Project.data.data_loader import DatasetPred, DatasetTrain, DatasetTest, Dat
 from Project.models.mamba_unet import MambaUNet
 from Project.models.swin_unet import SwinUnet
 from Project.models.swin_unet_new import SwinUnet_new
-from Project.models.mamba_unet_new import MambaUNet_new
+from Project.models.Mamba_TempNet import Mamba_TempNet
 from Project.models.conv_lstm import ConvLSTMSIC
 from Project.models.ConvLSTM_new import ConvLSTM_new
 from Project.models.Unet import UNet
@@ -63,7 +63,7 @@ class Exp:
             'SwinUNet': SwinUnet,
             'MambaUNet': MambaUNet,# ✅ 新增
             'SwinUNet_new': SwinUnet_new, # ✅ 新增
-            'MambaUNet_new': MambaUNet_new # ✅ 新增
+            'Mamba_TempNet': Mamba_TempNet # ✅ 新增
         }
 
         if self.args.model not in model_dict:
