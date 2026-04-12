@@ -21,7 +21,7 @@ Evaluated on an independent test set (2020–2024), Mamba-TempNet outperforms th
 Raw data sources:
 
 - **CMIP6 simulations**: [ESGF](https://esgf-node.ornl.gov/search) (variable: `tos`, frequency: daily, experiments: historical & SSP2-4.5, member: r1i1p1f1)
-- **OISST v2.1**: [NCEI](https://www.ncei.noaa.gov/data/sea-surface-temperature-optimum-interpolation/v2.1) (daily, 0.25° × 0.25°, 1982–2024)
+ **OISST v2.1**: [NCEI](https://www.ncei.noaa.gov/data/sea-surface-temperature-optimum-interpolation/v2.1) (daily, 0.25° × 0.25°, 1982–2024)
 
 The 21 CMIP6 models used in this study are listed below:
 
