@@ -76,7 +76,7 @@ python Project/main.py \
 
 ```
 o
-Available models: `Mamba_TempNet`, `UNet`, `CnvLSTM`, `Linear Regress`, `EDCDF`
+Available models: `Mamba_TempNet`, `UNet`, `CnvLSTM`, `EDCDF`
 
 Recommended training configurations:
 
