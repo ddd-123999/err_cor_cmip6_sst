@@ -18,8 +18,6 @@ Evaluated on an independent test set (2020–2024), Mamba-TempNet outperforms th
 
 ## Data
 
-Preprocessed data used in this study will be made available on Baidu Netdisk (coming soon).
-
 Raw data sources:
 
 - **CMIP6 simulations**: [ESGF](https://esgf-node.ornl.gov/search) (variable: `tos`, frequency: daily, experiments: historical & SSP2-4.5, member: r1i1p1f1)
