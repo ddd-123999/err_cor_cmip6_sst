@@ -72,10 +72,6 @@ Recommended training configurations:
 | UNet | 1e-5 | 32 |
 | ConvLSTM | 1e-3 | 32 |
 
-## Acknowledgments
-
-This work is supported by the National Natural Science Foundation of China (No. 42130402 and No. 42376231), National Key Research and Development Program of China (No. 2019YFA0607001), and Natural Science Foundation of Shanghai (No. 22ZR1427400).
-
 ## License
 
 This project is for academic research purposes.
