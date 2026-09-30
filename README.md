@@ -11,32 +11,6 @@ Raw data sources:
 - **CMIP6 simulations**: [ESGF](https://esgf-node.ornl.gov/search) (variable: `tos`, frequency: daily, experiments: historical & SSP2-4.5, member: r1i1p1f1)
  **OISST v2.1**: [NCEI](https://www.ncei.noaa.gov/data/sea-surface-temperature-optimum-interpolation/v2.1) (daily, 0.25° × 0.25°, 1982–2024)
 
-The 21 CMIP6 models used in this study are listed below:
-
-| Model | Country (Institution) | Ocean Component | Resolution (lon × lat) |
-|---|---|---|---|
-| ACCESS-CM2 | Australia (CSIRO-ARCCSS) | ACCESS-OM2 | 360 × 300 |
-| ACCESS-ESM1-5 | Australia (CSIRO) | ACCESS-OM2 | 360 × 300 |
-| BCC-CSM2-MR | China (BCC) | MOM4 | 360 × 232 |
-| CanESM5 | Canada (CCCma) | NEMO3.4.1 | 360 × 291 |
-| CESM2-WACCM | USA (NCAR) | POP2 | 320 × 384 |
-| CMCC-CM2-SR5 | Italy (CMCC) | NEMO3.6 | 362 × 292 |
-| CMCC-ESM2 | Italy (CMCC) | NEMO3.6 | 362 × 292 |
-| EC-Earth3-CC | Europe (EC-Earth Consortium) | NEMO3.6 | 362 × 292 |
-| EC-Earth3-Veg-LR | Europe (EC-Earth Consortium) | NEMO3.6 | 362 × 292 |
-| EC-Earth3-veg | Europe (EC-Earth Consortium) | NEMO3.6 | 362 × 292 |
-| EC-Earth3 | Europe (EC-Earth Consortium) | NEMO3.6 | 362 × 292 |
-| GFDL-CM4 | USA (NOAA-GFDL) | GFDL-OM4p25 | 1440 × 1080 |
-| GFDL-ESM4 | USA (NOAA-GFDL) | GFDL-OM4p25 | 720 × 576 |
-| IPSL-CM6A-LR | France (IPSL) | NEMO-OPA | 362 × 332 |
-| MIROC6 | Japan (MIROC) | COCO4.9 | 360 × 256 |
-| MPI-ESM1-2-HR | Germany (MPI-M) | MPIOM1.63 | 802 × 404 |
-| MPI-ESM1-2-LR | Germany (MPI-M) | MPIOM1.63 | 256 × 220 |
-| MRI-ESM2-0 | Japan (MRI) | MRI.COM4.4 | 360 × 363 |
-| NESM3 | China (NUIST) | NEMO3.4 | 362 × 292 |
-| NorESM2-LM | Norway (NCC) | MICOM | 360 × 385 |
-| NorESM2-MM | Norway (NCC) | MICOM | 360 × 385 |
-
 ## Requirements
 
 Using conda (recommended):
