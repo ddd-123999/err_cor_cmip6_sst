@@ -4,18 +4,6 @@ Projected Arctic SST warming trend halved by deep learning-based error correctio
 
 ![Model Architecture](Figure/Figure1/figure1.png)
 
-## Overview
-
-Mamba-TempNet is a deep learning error correction framework that extends a UNet backbone with residual learning blocks throughout the encoder, bottleneck, and decoder stages, and integrates a Bidirectional Mamba (BMamba) block at the bottleneck to enable global spatial feature modeling via state-space models (SSMs) with linear computational complexity. It corrects daily Arctic sea surface temperature (SST) errors across 21 CMIP6 models under the SSP2-4.5 scenario, using OISST v2.1 as the observational reference.
-
-Evaluated on an independent test set (2020–2024), Mamba-TempNet outperforms the statistical method EDCDF and deep learning methods ConvLSTM and UNet across all 21 models, demonstrating cross-model generalizability and spatiotemporal robustness.
-
-## Key Findings
-
-- Mamba-TempNet reduces **bias** by 57.4%–88.9%, **RMSE** by 13.1%–36.9%, **MAE** by 15.2%–50.2%, and improves **PCC** by 2.1%–9.5% relative to other correction methods across all 21 CMIP6 models
-- The projected MMM Arctic SST warming trend is reduced from **0.203°C decade⁻¹** to **0.103°C decade⁻¹** after correction, approximately halved
-- Correction performance is largely **independent of original model error levels**, demonstrating applicability to both high- and low-error models
-
 ## Data
 
 Raw data sources:
